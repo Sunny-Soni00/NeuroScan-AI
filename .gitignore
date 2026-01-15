@@ -1,0 +1,16 @@
+venv/
+env/
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.idea/
+.env
+BraTS2021_Raw/
+BraTS_Split/
+BraTS_Processed_2D/
+aryashah2k/
+*.nii.gz
+*.nii
+*.zip
+my_checkpoint.pth.tar
