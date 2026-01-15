@@ -76,11 +76,14 @@ BrainTumor_AI/
 
 ## 🚀 Getting Started
 
+Data set: https://www.kaggle.com/datasets/dschettler8845/brats-2021-task1
+testing data: https://www.kaggle.com/datasets/aryashah2k/brain-tumor-segmentation-brats-2019
+
 ### 1️⃣ Installation
 
 ```bash
 # Clone repository
-git clone https://github.com/your-username/NeuroScanAI.git
+git clone https://github.com/Sunny-Soni00/NeuroScan-AI
 cd NeuroScanAI
 
 # Create virtual environment (recommended)
@@ -275,13 +278,3 @@ if uploaded_file:
     
     st.write(report)  # Display clinical report
 ```
-
----
-
-## 📚 Citation & References
-
-- **BraTS Dataset**: Menze et al., "The Multimodal Brain Tumor Image Segmentation Benchmark (BRATS)" (2015)
-- **U-Net Architecture**: Ronneberger et al., "U-Net: Convolutional Networks for Biomedical Image Segmentation" (2015)
-- **Groq API**: Vision-Language Models for Medical Imaging
-
----
