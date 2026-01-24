@@ -14,3 +14,5 @@ aryashah2k/
 *.nii
 *.zip
 my_checkpoint.pth.tar
+*.pth.tar
+*.pth
