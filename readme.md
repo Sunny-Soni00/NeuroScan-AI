@@ -1,280 +1,129 @@
-# NeuroScan AI: Agentic Brain Tumor Segmentation & Diagnostics 🧠📋
+# NeuroScan AI: Brain Tumor Segmentation on Edge Devices
 
-## Project Overview
+A comparative study of two deep learning architectures for brain tumor segmentation, trained on BraTS 2021 and deployed on NVIDIA Jetson Nano 4GB using TensorRT FP16.
 
-**NeuroScan AI** is an end-to-end medical imaging pipeline that combines Deep Learning with Agentic AI to detect and analyze brain tumors from MRI scans. The system utilizes a custom U-Net architecture for high-precision segmentation and a Vision-Language Agent (Llama 4 Scout via Groq) to provide morphological diagnostics.
+## Results Summary
 
-### Key Features
+| Metric | DRUNetv2 | MobileNetV2-UNet |
+|---|---|---|
+| Parameters | 33.0M | **2.6M** (12.6x smaller) |
+| Val Dice (Training) | **0.9037** | 0.8986 |
+| Test Dice (Jetson TRT FP16) | 0.8127 | **0.8390** |
+| FPS (Jetson Nano) | 30.4 | **134.5** (4.4x faster) |
+| Latency | 34.1 ms | **8.6 ms** |
+| ONNX Size | 126 MB | **10.2 MB** |
+| TRT Engine Size | 63.9 MB | ~5 MB |
+| Jetson RAM Usage | 519 MB | **408 MB** |
 
-✅ **Dual-Dataset Validation**: Trained on BraTS 2021 and cross-validated on BraTS 2019 for robust generalization  
-✅ **Multi-Agent Workflow**: Radiologist Agent (segmentation) + Consultant Agent (grading & reporting)  
-✅ **Medical Safety First**: Clinical False Positive rate of only **0.14%**  
-✅ **GPU Optimized**: Mixed Precision training for NVIDIA RTX 5060 Laptop GPUs  
-✅ **Real-time Inference**: ~25ms per MRI slice  
+Both models maintain accuracy after FP16 quantisation (< 0.003 Dice difference).
 
----
+## Approach
 
-## 📊 Performance Metrics
+**2.5D Preprocessing**: For each target slice at position Z, we stack it with neighbours Z-1 and Z+1 to form a 3-channel input. This provides volumetric context without the memory cost of full 3D processing.
 
-| Metric | BraTS 2021 (Internal) | BraTS 2019 (External) | Status |
-|--------|----------------------|----------------------|--------|
-| **Mean Dice Score** | 0.9235 | 0.8510 | ✅ Verified |
-| **Precision** | 94.07% | 89.12% | ✅ Verified |
-| **Recall (Sensitivity)** | 83.88% | 78.45% | ✅ Verified |
-| **False Positive Rate** | 0.14% | 0.29% | 🔒 Safe |
+**Loss Function**: Hybrid Focal-Dice Loss combining Focal Loss (handles class imbalance, as tumors occupy <5% of pixels) and Dice Loss (directly optimises the overlap metric).
 
-**Generalization Gap**: Only 7.85% Dice drop across datasets (excellent cross-domain robustness)
+**Dataset**: BraTS 2021 (1251 volumes), split into 65,300 training / 8,293 validation / ~8,000 test 2D slices at 256x256 resolution.
 
----
+## Models
 
-## 🛠️ Tech Stack
+### DRUNetv2 (Attention Deep Residual U-Net)
+Custom architecture with Dilated Residual Blocks, Squeeze-and-Excitation channel attention, and Attention Gates on skip connections. 33M parameters, trained from scratch.
 
-| Component | Technology |
-|-----------|-----------|
-| **Model** | Custom 2D U-Net with Skip Connections |
-| **Deep Learning** | PyTorch (Nightly Build) |
-| **Web UI** | Streamlit |
-| **Vision-Language Model** | Groq SDK (Llama 4 Scout) |
-| **Medical Imaging** | Nibabel, Nilearn (NIfTI processing) |
-| **Image Processing** | OpenCV, Albumentations |
-| **GPU** | NVIDIA RTX 5060 Laptop (Mixed Precision) |
+### MobileNetV2-UNet
+ImageNet-pretrained MobileNetV2 encoder with a UNet-style decoder and skip connections. 2.6M parameters. Uses differential learning rate (encoder 0.1x, decoder 1x).
 
----
+Both trained with identical settings: Adam optimiser, batch size 16, 20 epochs, same augmentations (rotation, flip, elastic transform, CLAHE), mixed precision (FP16).
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 BrainTumor_AI/
-├── agent_app.py              # 🎯 Streamlit Multi-Agent Diagnostic Interface
-├── model.py                  # 🧠 U-Net Architecture Definition
-├── dataset.py                # 📦 BraTS Dataset Loader (DataLoader)
-├── train.py                  # 🏋️ Training Pipeline with Validation
-├── test_model.py             # ✅ Final Test Report Generation
-├── evaluate_2019.py          # 📊 Cross-Dataset Generalization Audit
-├── analyze_data.py           # 🔍 Data Quality Visualization
-├── split_data.py             # 📂 Train/Val/Test Split Script
-├── download_sample.py        # ⬇️ BraTS Dataset Downloader
 │
-├── my_checkpoint.pth.tar     # 💾 Trained Model Weights (Dice: 0.92)
-├── requirements.txt          # 📋 Python Dependencies
+├── DRUnet/                          # DRUNet v1 (baseline model)
+│   ├── model_drunet.py              # Standard U-Net architecture
+│   ├── train_drunet.py              # Training script
+│   ├── dataset_balance.py           # 2D dataset loader
+│   └── results/                     # Evaluation results & plots
 │
-├── BraTS_Split/              # 📁 Processed Dataset
-│   ├── train/
-│   ├── val/
-│   └── test/
+├── DRUnet_v2/                       # DRUNetv2 (attention-guided, 2.5D)
+│   ├── model_drunet_v2.py           # AttentionDRUNet architecture (33M params)
+│   ├── train_drunet_v2.py           # Training with mixed precision
+│   ├── dataset_balance_v2.py        # 2.5D dataset loader (Z-1, Z, Z+1)
+│   ├── utils_v2.py                  # HybridFocalDiceLoss, metrics
+│   ├── evaluate_with_tta.py         # Test-time augmentation evaluation
+│   └── results/                     # Metrics, plots, reports
 │
-├── results/                  # 📈 Final Evaluation Outputs
-│   ├── comparison_dice.png
-│   ├── confusion_matrix.png
-│   ├── generalization_histogram.png
-│   └── Final_Report_Card.png
+├── MobileNetV2_Seg/                 # MobileNetV2-UNet (lightweight)
+│   ├── model_mobilenetv2.py         # MobileNetV2 encoder + UNet decoder (2.6M params)
+│   ├── train_mobilenetv2.py         # Training with differential LR
+│   ├── export_onnx.py               # ONNX export with weight inlining
+│   └── results/                     # Metrics, laptop inference results
 │
-└── README.md                 # 📖 This File
+├── DRUnet_v2_jetson_deploy/         # Jetson deployment (DRUNetv2)
+│   ├── convert_to_trt.py            # ONNX → TensorRT conversion
+│   ├── run_inference_trt.py         # TensorRT inference + visualisation
+│   ├── run_inference.py             # ONNX Runtime alternative
+│   ├── verify_results.py            # Results analysis
+│   └── test_data/                   # 30 test samples (PNGs + masks)
+│
+├── mobilenetv2_jetson_deploy/       # Jetson deployment (MobileNetV2)
+│   ├── mobilenetv2_jetson.onnx      # Trained model (10.2 MB)
+│   ├── convert_to_trt.py            # ONNX → TensorRT conversion
+│   ├── run_inference_trt.py         # TensorRT inference + visualisation
+│   ├── run_inference.py             # ONNX Runtime alternative
+│   ├── verify_results.py            # Results analysis
+│   └── test_data/                   # 30 test samples (PNGs + masks)
+│
+├── agent_app.py                     # Streamlit multi-agent diagnostic app
+├── streamlit_drunetv2_proper.py     # DRUNetv2 Streamlit interface
+├── streamlit_drunetv2_app.py        # Streamlit app (alternate)
+├── test_drunetv2.py                 # DRUNetv2 test evaluation script
+└── readme.md                        # This file
 ```
 
----
+## Jetson Nano Deployment
 
-## 🚀 Getting Started
-
-Data set: https://www.kaggle.com/datasets/dschettler8845/brats-2021-task1
-testing data: https://www.kaggle.com/datasets/aryashah2k/brain-tumor-segmentation-brats-2019
-
-### 1️⃣ Installation
+Each model has a self-contained deploy folder. Copy to Jetson and run 3 commands:
 
 ```bash
-# Clone repository
-git clone https://github.com/Sunny-Soni00/NeuroScan-AI
-cd NeuroScanAI
+# DRUNetv2 (need to provide your own ONNX, not in repo due to 126 MB size)
+cd DRUnet_v2_jetson_deploy
+python3 convert_to_trt.py --fp16
+python3 run_inference_trt.py
 
-# Create virtual environment (recommended)
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
+# MobileNetV2 (ONNX included in repo, 10.2 MB)
+cd mobilenetv2_jetson_deploy
+python3 convert_to_trt.py --onnx mobilenetv2_jetson.onnx --fp16
+python3 run_inference_trt.py
 ```
 
-### 2️⃣ Download & Prepare Data
+Visualisation output for each test image: `Input | Ground Truth | Prediction | Overlap` with TP (green), FP (red), FN (blue) colour coding.
 
-```bash
-# Download BraTS 2021 dataset (automatic)
-python download_sample.py
+## Dataset
 
-# Split into train/val/test (80/10/10)
-python split_data.py
+- **Training**: [BraTS 2021 Task 1](https://www.kaggle.com/datasets/dschettler8845/brats-2021-task1)
+- **Cross-validation**: [BraTS 2019](https://www.kaggle.com/datasets/aryashah2k/brain-tumor-segmentation-brats-2019)
 
-# Visualize data quality
-python analyze_data.py
-```
-
-### 3️⃣ Train the Model (Optional)
-
-```bash
-# Start training from scratch (takes ~2-4 hours on RTX 5060)
-python train.py
-
-# Monitor validation metrics in real-time
-```
-
-### 4️⃣ Launch the Diagnostic Interface
-
-```bash
-# Start Streamlit app
-streamlit run agent_app.py
-
-# Open browser → http://localhost:8501
-# Upload an MRI scan → Get AI diagnosis
-```
-
-### 5️⃣ Evaluate Model Performance
-
-```bash
-# Test on internal test set
-python test_model.py
-
-# Cross-validate on BraTS 2019 (generalization audit)
-python evaluate_2019.py
-```
-
----
-
-## 🎯 How It Works
-
-### **Agent 1: Radiologist (Segmentation)**
-- Receives MRI scan (256×256 input)
-- U-Net predicts tumor segmentation mask
-- Calculates tumor area and location
-- Outputs: Binary mask + morphological metrics
-
-### **Agent 2: Consultant (Diagnosis)**
-- Receives tumor mask + medical context
-- Llama 4 Scout Vision Agent analyzes morphology
-- Grades tumor aggressiveness (HGG/LGG)
-- Outputs: Clinical report + confidence scores
-
----
-
-## 📈 Key Results
-
-### Generalization Analysis
-```
-BraTS 2021 (Training Set)
-├─ Mean Dice: 0.9235
-├─ Precision: 94.07%
-└─ Status: ✅ SOTA
-
-BraTS 2019 (External Audit)
-├─ Mean Dice: 0.8510
-├─ Precision: 89.12%
-├─ Generalization Gap: -7.85%
-└─ Status: ✅ Excellent Cross-Domain Transfer
-```
-
-### Safety Metrics
-- **True Negative Rate**: 98.71% (healthy tissue correctly identified)
-- **False Positive Rate**: 0.14% (minimal false alarms)
-- **Clinical Grade**: 🔒 Safe for deployment
-
----
-
-## ⚙️ Configuration
-
-Edit these settings in `agent_app.py` or training scripts:
-
-```python
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-IMG_SIZE = 256                    # Input image resolution
-BATCH_SIZE = 16                   # Training batch size
-LEARNING_RATE = 1e-4             # Adam optimizer LR
-NUM_EPOCHS = 50                   # Training epochs
-CHECKPOINT_PATH = "my_checkpoint.pth.tar"
-```
-
----
-
-## 📦 Requirements
-
-```txt
-torch>=2.0.0
-torchvision>=0.15.0
-streamlit>=1.28.0
-opencv-python>=4.8.0
-numpy>=1.24.0
-nibabel>=5.0.0
-nilearn>=0.10.0
-matplotlib>=3.7.0
-pillow>=10.0.0
-albumentations>=1.3.0
-groq>=0.4.0
-google-generativeai>=0.3.0
-tqdm>=4.66.0
-kagglehub>=0.2.0
-```
-
-Install all at once:
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## 🔬 Model Architecture
+## Requirements
 
 ```
-Input (1, 256, 256)
-    ↓
-Encoder (4 levels)
-    ├─ Conv 1×1 → 64 channels
-    ├─ Conv 64 → 128 (MaxPool)
-    ├─ Conv 128 → 256 (MaxPool)
-    └─ Conv 256 → 512 (MaxPool)
-    ↓
-Bottleneck (512 → 512)
-    ↓
-Decoder (4 levels)
-    ├─ UpConv 512 → 256 (Skip Connection)
-    ├─ UpConv 256 → 128 (Skip Connection)
-    ├─ UpConv 128 → 64 (Skip Connection)
-    └─ UpConv 64 → 1 (Output)
-    ↓
-Sigmoid Activation
-    ↓
-Output: Probability Map (1, 256, 256)
+torch >= 2.0
+torchvision
+albumentations
+opencv-python
+numpy
+pandas
+tqdm
+onnx
+onnxruntime
 ```
 
-**Parameters**: ~7.8M trainable weights
+## Hardware
 
----
+- **Training**: NVIDIA RTX 5060 Laptop GPU (8 GB VRAM), mixed precision
+- **Inference**: NVIDIA Jetson Nano 4 GB, TensorRT FP16, JetPack
 
-## 🚨 Known Limitations & Future Work
+## Author
 
-| Limitation | Impact | Planned Fix |
-|-----------|--------|------------|
-| Micro-tumors (<50px) | Low sensitivity for small lesions | Attention-Gated U-Net |
-| 2D Slices Only | Ignores volumetric context | 3D U-Net implementation |
-| FLAIR Modality | Other MRI sequences not supported | Multi-modal fusion |
-| Inference Latency | ~25ms per slice | Model quantization (INT8) |
-
----
-
-## 📝 Usage Example
-
-```python
-from PIL import Image
-import streamlit as st
-
-# In agent_app.py:
-uploaded_file = st.file_uploader("Upload MRI Scan", type=["png", "jpg", "nii.gz"])
-
-if uploaded_file:
-    # Preprocessing
-    img = Image.open(uploaded_file)
-    
-    # Agent 1: Segmentation
-    tumor_mask = unet_model.predict(img)
-    
-    # Agent 2: Diagnosis
-    report = groq_client.analyze_tumor(tumor_mask, img)
-    
-    st.write(report)  # Display clinical report
-```
+Sunny Soni

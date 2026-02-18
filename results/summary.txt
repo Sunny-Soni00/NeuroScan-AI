@@ -1,5 +1,0 @@
-BRAIN TUMOR AI EVALUATION REPORT
---------------------------------
-BraTS 2021 Mean Dice: 0.9235
-BraTS 2019 Mean Dice: 0.8510
-Generalization Drop: 7.85%
