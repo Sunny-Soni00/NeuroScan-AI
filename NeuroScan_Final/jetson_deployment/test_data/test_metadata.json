@@ -1,0 +1,249 @@
+{
+  "total_samples": 30,
+  "tumor_cases": 30,
+  "clear_cases": 0,
+  "format": "npz: input[3,256,256] float32, mask[256,256] float32, filename str",
+  "preprocessing": "MATCHES dataset_balance_v2.py: /255 norm, 2.5D [prev,curr,next]",
+  "samples": [
+    {
+      "id": 1,
+      "filename": "BraTS2021_00025_slice_108.png",
+      "tumor_pixels": 1,
+      "has_tumor": true,
+      "has_prev_slice": false,
+      "has_next_slice": false
+    },
+    {
+      "id": 2,
+      "filename": "BraTS2021_01588_slice_34.png",
+      "tumor_pixels": 30,
+      "has_tumor": true,
+      "has_prev_slice": false,
+      "has_next_slice": true
+    },
+    {
+      "id": 3,
+      "filename": "BraTS2021_00729_slice_64.png",
+      "tumor_pixels": 78,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 4,
+      "filename": "BraTS2021_01371_slice_100.png",
+      "tumor_pixels": 138,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 5,
+      "filename": "BraTS2021_00378_slice_72.png",
+      "tumor_pixels": 206,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 6,
+      "filename": "BraTS2021_01210_slice_118.png",
+      "tumor_pixels": 288,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 7,
+      "filename": "BraTS2021_01342_slice_121.png",
+      "tumor_pixels": 369,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 8,
+      "filename": "BraTS2021_00341_slice_98.png",
+      "tumor_pixels": 462,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 9,
+      "filename": "BraTS2021_01330_slice_77.png",
+      "tumor_pixels": 555,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 10,
+      "filename": "BraTS2021_01199_slice_110.png",
+      "tumor_pixels": 656,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 11,
+      "filename": "BraTS2021_01382_slice_77.png",
+      "tumor_pixels": 745,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 12,
+      "filename": "BraTS2021_00152_slice_41.png",
+      "tumor_pixels": 841,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 13,
+      "filename": "BraTS2021_00212_slice_112.png",
+      "tumor_pixels": 950,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 14,
+      "filename": "BraTS2021_01335_slice_117.png",
+      "tumor_pixels": 1045,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 15,
+      "filename": "BraTS2021_01206_slice_66.png",
+      "tumor_pixels": 1146,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 16,
+      "filename": "BraTS2021_01433_slice_63.png",
+      "tumor_pixels": 1252,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 17,
+      "filename": "BraTS2021_01353_slice_51.png",
+      "tumor_pixels": 1367,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 18,
+      "filename": "BraTS2021_00211_slice_64.png",
+      "tumor_pixels": 1502,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 19,
+      "filename": "BraTS2021_01636_slice_81.png",
+      "tumor_pixels": 1637,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 20,
+      "filename": "BraTS2021_00364_slice_82.png",
+      "tumor_pixels": 1802,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 21,
+      "filename": "BraTS2021_00386_slice_57.png",
+      "tumor_pixels": 1967,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 22,
+      "filename": "BraTS2021_01438_slice_62.png",
+      "tumor_pixels": 2149,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 23,
+      "filename": "BraTS2021_00260_slice_104.png",
+      "tumor_pixels": 2327,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 24,
+      "filename": "BraTS2021_01082_slice_48.png",
+      "tumor_pixels": 2515,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 25,
+      "filename": "BraTS2021_01401_slice_47.png",
+      "tumor_pixels": 2733,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 26,
+      "filename": "BraTS2021_01047_slice_68.png",
+      "tumor_pixels": 2949,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 27,
+      "filename": "BraTS2021_01282_slice_90.png",
+      "tumor_pixels": 3183,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 28,
+      "filename": "BraTS2021_01465_slice_93.png",
+      "tumor_pixels": 3527,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 29,
+      "filename": "BraTS2021_00456_slice_92.png",
+      "tumor_pixels": 4060,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    },
+    {
+      "id": 30,
+      "filename": "BraTS2021_01432_slice_86.png",
+      "tumor_pixels": 5330,
+      "has_tumor": true,
+      "has_prev_slice": true,
+      "has_next_slice": true
+    }
+  ]
+}

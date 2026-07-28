@@ -1,0 +1,38 @@
+{
+    "num_images": 30,
+    "threshold": 0.5,
+    "confusion_matrix_counts": {
+        "tn": 1911393,
+        "fp": 2562,
+        "fn": 4639,
+        "tp": 47486,
+        "matrix": [
+            [
+                1911393,
+                2562
+            ],
+            [
+                4639,
+                47486
+            ]
+        ],
+        "layout": "[[TN, FP], [FN, TP]]"
+    },
+    "confusion_matrix_percent": {
+        "matrix": [
+            [
+                97.21847534179688,
+                0.13031005859375
+            ],
+            [
+                0.23595174153645831,
+                2.4152628580729165
+            ]
+        ],
+        "unit": "percent_of_all_pixels"
+    },
+    "saved_plots": {
+        "counts": "results/laptop_test/pixel_confusion_matrix_counts.png",
+        "percent": "results/laptop_test/pixel_confusion_matrix_percent.png"
+    }
+}

@@ -1,0 +1,3 @@
+Model Complexity Report
+GFLOPs: 58.56
+Params (M): 33.00

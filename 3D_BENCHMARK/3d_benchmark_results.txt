@@ -1,0 +1,3 @@
+3D U-Net Benchmark Report
+GFLOPs: 438.93
+Latency: 128.71 ms
