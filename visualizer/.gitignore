@@ -1,0 +1,3 @@
+# Generated visualization assets (re-create with: python visualizer/extract/export_activations.py)
+data/
+__pycache__/

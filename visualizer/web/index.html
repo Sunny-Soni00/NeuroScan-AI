@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Segmentation Explainer</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">◧</span>
+    <div>
+      <h1>Segmentation Explainer</h1>
+      <p class="sub">Open the brain-tumour U-Net and watch the signal flow through it, one stage at a time.</p>
+    </div>
+  </div>
+  <div class="pickers">
+    <label>Model <select id="modelSel"></select></label>
+    <label>MRI slice <select id="sampleSel"></select></label>
+    <button id="themeBtn" class="iconbtn" title="toggle light / dark">◐</button>
+  </div>
+</header>
+
+<p class="readme">
+  <b>How to read this:</b> the strip below is the whole network laid out left → right.
+  Press <b>▶</b> and a pulse travels along it while each block lights up as the data
+  reaches it. Click any block (or the orange <b>attention</b> diamonds) to inspect
+  what that step computes — its feature maps, its operations, its tensor shapes.
+  The final <b>Head</b> step has a live threshold you can drag.
+</p>
+
+<div class="layout">
+  <aside class="rail">
+    <h2>This slice</h2>
+    <figure><img id="refInput" alt="input MRI slice" />
+      <figcaption>Input &mdash; middle slice</figcaption></figure>
+    <figure><img id="refGT" alt="ground-truth tumour mask" />
+      <figcaption>Ground truth &mdash; the correct answer</figcaption></figure>
+    <figure><img id="refPred" alt="model probability" />
+      <figcaption>Model output &mdash; tumour probability</figcaption></figure>
+    <div class="railstats" id="railStats"></div>
+    <p class="hint">These three stay fixed so you always see where the pipeline
+      is heading while you step through it.</p>
+  </aside>
+
+  <main class="stage-area">
+    <section class="card diagram-card">
+      <div class="card-head"><h2>Architecture &mdash; signal flow</h2>
+        <div class="legend" id="archLegend"></div></div>
+      <div id="arch"></div>
+    </section>
+
+    <section class="card transport">
+      <button id="prevBtn" class="tbtn" title="previous stage (←)">⏮</button>
+      <button id="playBtn" class="tbtn play" title="play / pause (space)">▶</button>
+      <button id="nextBtn" class="tbtn" title="next stage (→)">⏭</button>
+      <input type="range" id="stageRange" min="0" max="0" value="0" />
+      <div class="tnow"><span id="stageCount" class="pill"></span><span id="stageNow"></span></div>
+      <label class="speed">speed
+        <input type="range" id="speed" min="500" max="3000" step="100" value="2100" /></label>
+    </section>
+
+    <section class="card viewer-card">
+      <div class="card-head"><h2 id="stageTitle"></h2><span class="kindtag" id="stageKind"></span></div>
+      <div class="io-line" id="ioLine"></div>
+      <div id="viewer"></div>
+      <p id="stageCaption" class="caption"></p>
+      <div class="ops" id="opsBox"></div>
+      <div id="stageStats" class="statgrid"></div>
+    </section>
+  </main>
+</div>
+
+<div id="lightbox"><img id="lightboxImg" alt="" /><div class="cap" id="lightboxCap"></div></div>
+
+<footer>
+  Feature maps, attention maps and probabilities are precomputed by
+  <code>visualizer/extract/export_activations.py</code>. The threshold, histogram,
+  attention-opacity and theme controls run live in your browser. View state is in
+  the URL &mdash; copy the link to share this exact model / slice / stage.
+</footer>
+
+<script src="js/arch.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
