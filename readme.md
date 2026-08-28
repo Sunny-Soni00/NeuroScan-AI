@@ -14,7 +14,6 @@ behaviour of the networks stage by stage.
 - [Results Summary](#results-summary)
 - [Method](#method)
 - [Model Architectures](#model-architectures)
-- [Model Distribution](#model-distribution)
 - [Interactive Explainer](#interactive-explainer)
 - [Repository Structure](#repository-structure)
 - [Getting Started](#getting-started)
@@ -124,23 +123,6 @@ bilinearly, concatenates the encoder skip connection, and applies two 3x3
 convolutions per stage. There are no SE blocks and no attention gates; the
 decoder recovers all spatial detail from the raw skips. Approximately 2.6M
 parameters, trained with a differential learning rate.
-
-## Model Distribution
-
-The repository includes the ready-to-run MobileNetV2-UNet ONNX model:
-
-- [`mobilenetv2_jetson.onnx`](mobilenetv2_jetson_deploy/mobilenetv2_jetson.onnx) - 2.5D input (`3 x 256 x 256`), binary segmentation output, approximately 10.2 MB.
-
-It can be used with ONNX Runtime or converted to a TensorRT FP16 engine using the
-instructions in [Jetson Nano Deployment](#jetson-nano-deployment). The DRUNetv2
-PyTorch checkpoints and ONNX export are not included as tracked release assets;
-the training and export code remains in the repository.
-
-For a professional model release, the recommended free distribution target is a
-Hugging Face model repository with a model card, license, preprocessing details,
-evaluation results, and checksums. No Hugging Face repository has been published
-yet because this account is not authenticated in the current environment. The
-tracked ONNX file above remains directly available from GitHub in the meantime.
 
 ## Interactive Explainer
 
